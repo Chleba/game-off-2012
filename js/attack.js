@@ -1,13 +1,14 @@
 BattleMage.Attack = JAK.ClassMaker.makeClass({
 	NAME : 'BattleMage.Attack',
-	VERSION : '1.0'
+	VERSION : '1.0',
+	IMPLEMENT : JAK.ISignals
 });
 
 BattleMage.Attack.prototype.$constructor = function(player){
 	this.player = player;
 	this.dung = this.player.dung;
 	this.SPRITE = this.player.SPRITE;
-	this.DMG = 10;
+	this.DMG = 50;
 
 	this.direction = this.dung.direction;
 
@@ -178,6 +179,9 @@ BattleMage.Attack.prototype.update = function(){
 			// DMG NPCS
 			this._dmgNpcs( this.attackObj );
 			this.attackObj.current = this.attackObj.start;
+
+			this.makeEvent('playSound', { soundName : 'saber' });
+
 		} else {
 			var d = new Date().getTime();
 			var da = (d - this.startTime) / 40;

@@ -16,7 +16,7 @@ BattleMage.NPC.prototype.$constructor = function(dung, opt){
 	this.dung = dung;
 	
 	this.HP = 100;
-	this.DMG = 5;
+	this.DMG = 10;
 
 	this.map = this.dung.getMapInstance();
 	this.mapPointSize = this.map.getPointSize();
@@ -83,8 +83,6 @@ BattleMage.NPC.prototype.update = function(){
 	}
 
 	this._updateDmg();
-
-	return;
 };
 
 BattleMage.NPC.prototype._moveAnim = function(num){
@@ -163,9 +161,11 @@ BattleMage.NPC.prototype.getSmallPxCoords = function(){
 };
 
 BattleMage.NPC.prototype.getSmallMiddleCoords = function(){
+	var width = this.SPRITE[this.direction].frames.frame[0].layers.layer.rect.width;
+	var height = this.SPRITE[this.direction].frames.frame[0].layers.layer.rect.height;
 	var obj = {
-		x : this.smallPxCoords.x + ((this.SPRITE.step * this.SPRITE.scale) / 2),
-		y : this.smallPxCoords.y + ((this.SPRITE[this.direction].height * this.SPRITE.scale) / 2)
+		x : this.smallPxCoords.x + ((width * this.SPRITE.scale) / 2),
+		y : this.smallPxCoords.y + ((height * this.SPRITE.scale) / 2)
 	};
 	return obj;
 };
@@ -182,6 +182,7 @@ BattleMage.NPC.prototype.getDmg = function(dmg){
 };
 
 BattleMage.NPC.prototype._die = function(){
+	this.makeEvent('playSound', { soundName : 'death' });
 	this.$destructor();
 };
 
@@ -326,5 +327,5 @@ BattleMage.NPC.prototype._move = function(){
 };
 
 BattleMage.NPC.prototype._attack = function(){
-	this.makeEvent('npcAttack', { dmg : this.DMG });
+	this.makeEvent('npcAttack', { dmg : this.DMG, npcID : this.uniqueID });
 };

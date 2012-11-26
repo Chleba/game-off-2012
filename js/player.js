@@ -63,6 +63,39 @@ BattleMage.Player.prototype._makeSprite = function(){
 };
 
 BattleMage.Player.prototype._dmg = function(e){
+	if(e.type == 'npcShotHit'){
+		if(!!this.blocking){
+			var rand = Math.random();
+			if(rand > 0.53){
+				var npc = null;
+				var npcs = this.dung.npcs;
+				for(var i=0;i<npcs.length;i++){
+					if(npcs[i].uniqueID == e.data.npcId){
+						var npc = npcs[i];
+						break;
+					}
+				}
+				if(!!npc){
+					var img = new Image();
+					img.src = './img/blastershot.png';
+					var shotOpt = {
+						img : img,
+						canvas : this.canvas,
+						from : this.getPosition(),
+						to : npc.getSmallMiddleCoords(),
+						eventType : 'reverseShot',
+						eventData : { npcId : npc.uniqueID }
+					};
+					this.shot = new BattleMage.SHOT(shotOpt);
+
+					this.makeEvent('playSound', { soundName : 'deflect' });
+
+				}
+			}
+			return;
+		}
+	}
+
 	this.HP = this.HP-e.data.dmg < 0 ? 0 : this.HP-e.data.dmg;
 	if(this.HP <= 0){
 		this._death();
@@ -118,13 +151,22 @@ BattleMage.Player.prototype.setCenter = function(center){
 };
 
 BattleMage.Player.prototype.draw = function(){
+	// shot
+	if(!!this.shot){
+		if(!!this.shot.draw){
+			this.shot.draw();
+		} else {
+			this.shot = null;
+		}
+	}	
 	// death
-	/*-
 	if(!!this.dead){
+		this.dung._gameOver();
+		/*-
 		this._drawDeath();
 		return;
+		-*/
 	}
-	-*/
 	// attack
 	if(!!this.attacking){
 		this.attack.draw();
@@ -171,6 +213,14 @@ BattleMage.Player.prototype._stickDraw = function(){
 };
 
 BattleMage.Player.prototype.update = function(){
+	if(!!this.shot){
+		if(!!this.shot.update){
+			this.shot.update();
+		} else {
+			this.shot = null;
+		}
+	}
+
 	if(!!this.attacking){
 		this.attack.update();
 	}
@@ -194,7 +244,7 @@ BattleMage.Player.prototype.update = function(){
 			}
 			if (this.moveRight){
 				this.direction = RPG.E;
-				pxCoords.x += Math.round(this.opt.step * da);
+				pxCoords.x += Math.ceil(this.opt.step * da);
 			}
 			if (this.moveTop){
 				this.direction = RPG.N;
@@ -202,7 +252,7 @@ BattleMage.Player.prototype.update = function(){
 			}
 			if (this.moveBottom){
 				this.direction = RPG.S;
-				pxCoords.y += Math.round(this.opt.step * da);
+				pxCoords.y += Math.ceil(this.opt.step * da);
 			}
 		}
 	}
@@ -286,10 +336,16 @@ BattleMage.Player.prototype._finder = function(coords){
 BattleMage.Player.prototype._moveStart = function(e, elm){
 	var k = e.keyCode;
 	switch(k){
+		/*- block -*/
+		case 88 :
+			this.blocking = true;
+			JAK.Events.cancelDef(e);
+			break;
 		/*- attack -*/
 		case 32 :
-			this.attacking = true;
 			JAK.Events.cancelDef(e);
+			if(!!this.blocking){ break; }
+			this.attacking = true;
 			break;
 		case 38 :
 			/*- up -*/
@@ -318,6 +374,11 @@ BattleMage.Player.prototype._moveStart = function(e, elm){
 BattleMage.Player.prototype._moveEnd = function(e, elm){
 	var k = e.keyCode;
 	switch(k){
+		/*- block -*/
+		case 88 :
+			this.blocking = false;
+			JAK.Events.cancelDef(e);
+			break;
 		/*- attack -*/
 		case 32 :
 			this.attacking = false;
@@ -442,5 +503,6 @@ BattleMage.Player.prototype._link = function(){
 		this.ec.push( JAK.Events.addListener(window, 'keydown', this, '_moveStart') );
 		this.ec.push( JAK.Events.addListener(window, 'keyup', this, '_moveEnd') );	
 	}
+	this.sigs.push( this.addListener( 'npcShotHit', this._dmg.bind(this) ) );
 	this.sigs.push( this.addListener( 'npcAttack', this._dmg.bind(this) ) );
 };
