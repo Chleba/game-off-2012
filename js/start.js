@@ -23,9 +23,9 @@ BattleMage.StartScreen.prototype._build = function(){
 	this.dom.title = JAK.mel('h1', { innerHTML : '<img src="./img/starwarslogo.png" />' });
 	
 	this.dom.controlDiv = JAK.mel('div', { className : 'controls' });
-	this.dom.moveText = JAK.mel('p', { innerHTML : 'Movement : keyboard arrows' });
-	this.dom.attackText = JAK.mel('p', { innerHTML : 'Attack : HOLD "space" key' });
-	this.dom.blockText = JAK.mel('p', { innerHTML : 'Block : HOLD "x" key' });
+	this.dom.moveText = JAK.mel('p', { innerHTML : '<label>Movement :</label> <span>keyboard arrows</span>' });
+	this.dom.attackText = JAK.mel('p', { innerHTML : '<label>Attack :</label> <span>HOLD "space" key</span>' });
+	this.dom.blockText = JAK.mel('p', { innerHTML : '<label>Block :</label> <span>HOLD "x" key</span>' });
 
 	this.dom.controlDiv.appendChild(this.dom.moveText);
 	this.dom.controlDiv.appendChild(this.dom.attackText);
