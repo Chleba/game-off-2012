@@ -24,8 +24,8 @@ BattleMage.StartScreen.prototype._build = function(){
 	
 	this.dom.controlDiv = JAK.mel('div', { className : 'controls' });
 	this.dom.moveText = JAK.mel('p', { innerHTML : 'Movement : keyboard arrows' });
-	this.dom.attackText = JAK.mel('p', { innerHTML : 'Attack : "space" key' });
-	this.dom.blockText = JAK.mel('p', { innerHTML : 'Block : "x" key' });
+	this.dom.attackText = JAK.mel('p', { innerHTML : 'Attack : HOLD "space" key' });
+	this.dom.blockText = JAK.mel('p', { innerHTML : 'Block : HOLD "x" key' });
 
 	this.dom.controlDiv.appendChild(this.dom.moveText);
 	this.dom.controlDiv.appendChild(this.dom.attackText);

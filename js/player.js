@@ -66,7 +66,7 @@ BattleMage.Player.prototype._dmg = function(e){
 	if(e.type == 'npcShotHit'){
 		if(!!this.blocking){
 			var rand = Math.random();
-			if(rand > 0.53){
+			if(rand > 0.5){
 				var npc = null;
 				var npcs = this.dung.npcs;
 				for(var i=0;i<npcs.length;i++){
@@ -78,11 +78,13 @@ BattleMage.Player.prototype._dmg = function(e){
 				if(!!npc){
 					var img = new Image();
 					img.src = './img/blastershot.png';
+					var from = this.getPosition();
+					var to = npc.getSmallMiddleCoords();
 					var shotOpt = {
 						img : img,
 						canvas : this.canvas,
-						from : this.getPosition(),
-						to : npc.getSmallMiddleCoords(),
+						from : from,
+						to : to,
 						eventType : 'reverseShot',
 						eventData : { npcId : npc.uniqueID }
 					};
@@ -90,6 +92,7 @@ BattleMage.Player.prototype._dmg = function(e){
 
 					this.makeEvent('playSound', { soundName : 'deflect' });
 
+					this.delectAngle = Math.atan2( (to.y - from.y), (to.x - from.x) );
 				}
 			}
 			return;
@@ -151,6 +154,11 @@ BattleMage.Player.prototype.setCenter = function(center){
 };
 
 BattleMage.Player.prototype.draw = function(){
+	// deflect
+	if(!!this.blocking){
+		var pos = this.getPosition();
+		this.attack.drawAngle(pos, this.delectAngle);
+	}
 	// shot
 	if(!!this.shot){
 		if(!!this.shot.draw){

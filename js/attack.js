@@ -57,6 +57,15 @@ BattleMage.Attack.prototype._getAttackAngle = function(){
 	return angle;
 };
 
+BattleMage.Attack.prototype.drawAngle = function(pos, angle){
+	this.canvas.save();
+	this.canvas.translate(pos.x, pos.y);
+	this.canvas.rotate(angle);
+	this.canvas.translate( -(this.imgSize.w / 2), -(this.imgSize.h) );
+	this.canvas.drawImage( this.img, 0, 0 );
+	this.canvas.restore();
+};
+
 BattleMage.Attack.prototype.draw = function(){	
 	var scale = 1.5;
 	var sw = this.imgSize.w*scale; sh = this.imgSize.h*scale;
